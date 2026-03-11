@@ -1,8 +1,6 @@
-package com.bto.notification;
+package com.bto.receiver.model;
 
-import java.io.Serializable;
-
-public class Notification implements Serializable {
+public class Notification  {
 
     private String email;
     private String title;

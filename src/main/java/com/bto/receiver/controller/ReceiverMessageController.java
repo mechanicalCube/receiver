@@ -1,8 +1,9 @@
-package com.bto.receiver;
+package com.bto.receiver.controller;
 
-import com.bto.notification.Notification;
+import com.bto.receiver.model.Notification;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,14 +35,15 @@ public class ReceiverMessageController {
 
    @RabbitListener(queues = "kurs")
    public  void listenerMessages(Notification notification){
-     System.out.println(notification);
+
+        System.out.println(notification.getEmail() + " " + notification.getTitle() + " " + notification.getBody());
   }
 
     @GetMapping("/notification")
     public ResponseEntity<Notification> receiveNotification(){
-        Object notification = rabbitTemplate.receiveAndConvert("kurs");
-        if(notification instanceof Notification) {
-            return ResponseEntity.ok((Notification) notification);
+        Notification notification = rabbitTemplate.receiveAndConvert("kurs", ParameterizedTypeReference.forType(Notification.class));
+        if(notification != null) {
+            return ResponseEntity.ok(notification);
         }else {
             return ResponseEntity.noContent().build();
             }
